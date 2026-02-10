@@ -36,6 +36,72 @@ const ERROR_MESSAGE =
   "I'm having trouble connecting. Please try again or call us at +91 80 4567 8900.";
 
 // ---------------------------------------------------------------------------
+// Simple Markdown Renderer (safety net — LLM is told not to use markdown)
+// ---------------------------------------------------------------------------
+
+function renderMarkdown(text: string): React.ReactNode[] {
+  const lines = text.split('\n');
+  const elements: React.ReactNode[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+
+    // Convert **bold** to <strong>
+    const parts: React.ReactNode[] = [];
+    const boldRegex = /\*\*(.+?)\*\*/g;
+    let lastIndex = 0;
+    let match;
+
+    while ((match = boldRegex.exec(line)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(line.slice(lastIndex, match.index));
+      }
+      parts.push(<strong key={`b-${i}-${match.index}`}>{match[1]}</strong>);
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < line.length) {
+      parts.push(line.slice(lastIndex));
+    }
+    if (parts.length === 0) parts.push(line);
+
+    // Bullet points: lines starting with "- "
+    if (line.trimStart().startsWith('- ')) {
+      elements.push(
+        <span key={`line-${i}`} className="flex gap-1.5 ml-1">
+          <span className="shrink-0 mt-[2px]">•</span>
+          <span>{parts.length > 0 ? parts.map((p, j) =>
+            typeof p === 'string' ? p.replace(/^-\s*/, '') : p
+          ) : line.replace(/^-\s*/, '')}</span>
+        </span>
+      );
+    }
+    // Numbered list: lines starting with "N. "
+    else if (/^\d+\.\s/.test(line.trimStart())) {
+      elements.push(
+        <span key={`line-${i}`} className="flex gap-1.5 ml-1">
+          <span>{parts}</span>
+        </span>
+      );
+    }
+    // Regular line
+    else {
+      elements.push(
+        <span key={`line-${i}`}>
+          {parts}
+        </span>
+      );
+    }
+
+    // Add line break between lines (not after last)
+    if (i < lines.length - 1) {
+      elements.push(<br key={`br-${i}`} />);
+    }
+  }
+
+  return elements;
+}
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -379,14 +445,9 @@ export default function ChatWidget() {
                       ? 'rounded-tr-sm bg-forest text-white'
                       : 'rounded-tl-sm bg-white text-charcoal shadow-sm'
                   }`}
+                  style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}
                 >
-                  {/* Render newlines as line breaks */}
-                  {msg.content.split('\n').map((line, lineIdx) => (
-                    <span key={lineIdx}>
-                      {line}
-                      {lineIdx < msg.content.split('\n').length - 1 && <br />}
-                    </span>
-                  ))}
+                  {renderMarkdown(msg.content)}
                 </div>
               </div>
             ))}
