@@ -36,42 +36,74 @@ const ERROR_MESSAGE =
   "I'm having trouble connecting. Please try again or call us at +91 80 4567 8900.";
 
 // ---------------------------------------------------------------------------
-// Simple Markdown Renderer (safety net — LLM is told not to use markdown)
+// Markdown Renderer — supports bold, italic, links, and lists
 // ---------------------------------------------------------------------------
+
+function renderInlineMarkdown(line: string, lineIdx: number): React.ReactNode[] {
+  // Process inline formatting: links, bold, italic
+  // Order matters: links first, then bold, then italic
+  const parts: React.ReactNode[] = [];
+  // Combined regex: [text](url) | **bold** | *italic*
+  const inlineRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+|mailto:[^\s)]+)\)|\*\*(.+?)\*\*|\*(.+?)\*/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = inlineRegex.exec(line)) !== null) {
+    // Push text before match
+    if (match.index > lastIndex) {
+      parts.push(line.slice(lastIndex, match.index));
+    }
+
+    if (match[1] && match[2]) {
+      // Link: [text](url)
+      parts.push(
+        <a
+          key={`a-${lineIdx}-${match.index}`}
+          href={match[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-forest underline underline-offset-2 hover:text-forest-light"
+        >
+          {match[1]}
+        </a>
+      );
+    } else if (match[3]) {
+      // Bold: **text**
+      parts.push(<strong key={`b-${lineIdx}-${match.index}`}>{match[3]}</strong>);
+    } else if (match[4]) {
+      // Italic: *text*
+      parts.push(<em key={`i-${lineIdx}-${match.index}`}>{match[4]}</em>);
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < line.length) {
+    parts.push(line.slice(lastIndex));
+  }
+  if (parts.length === 0) parts.push(line);
+
+  return parts;
+}
 
 function renderMarkdown(text: string): React.ReactNode[] {
   const lines = text.split('\n');
   const elements: React.ReactNode[] = [];
 
   for (let i = 0; i < lines.length; i++) {
-    let line = lines[i];
-
-    // Convert **bold** to <strong>
-    const parts: React.ReactNode[] = [];
-    const boldRegex = /\*\*(.+?)\*\*/g;
-    let lastIndex = 0;
-    let match;
-
-    while ((match = boldRegex.exec(line)) !== null) {
-      if (match.index > lastIndex) {
-        parts.push(line.slice(lastIndex, match.index));
-      }
-      parts.push(<strong key={`b-${i}-${match.index}`}>{match[1]}</strong>);
-      lastIndex = match.index + match[0].length;
-    }
-    if (lastIndex < line.length) {
-      parts.push(line.slice(lastIndex));
-    }
-    if (parts.length === 0) parts.push(line);
+    const line = lines[i];
+    const parts = renderInlineMarkdown(line, i);
 
     // Bullet points: lines starting with "- "
     if (line.trimStart().startsWith('- ')) {
+      // Strip the leading "- " from text parts
+      const strippedParts = parts.map((p, j) =>
+        j === 0 && typeof p === 'string' ? p.replace(/^\s*-\s*/, '') : p
+      );
       elements.push(
         <span key={`line-${i}`} className="flex gap-1.5 ml-1">
           <span className="shrink-0 mt-[2px]">•</span>
-          <span>{parts.length > 0 ? parts.map((p, j) =>
-            typeof p === 'string' ? p.replace(/^-\s*/, '') : p
-          ) : line.replace(/^-\s*/, '')}</span>
+          <span>{strippedParts}</span>
         </span>
       );
     }
