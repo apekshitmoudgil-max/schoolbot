@@ -33,7 +33,7 @@ const QUICK_ACTIONS = [
 ];
 
 const ERROR_MESSAGE =
-  "I'm having trouble connecting. Please try again or call us at +91 80 4567 8900.";
+  "I'm having trouble connecting. Please try again or email us at admissions@greenwoodacademy.edu.in.";
 
 // ---------------------------------------------------------------------------
 // Markdown Renderer — supports bold, italic, links, and lists
@@ -359,10 +359,10 @@ export default function ChatWidget() {
         @keyframes pulse-soft {
           0%,
           100% {
-            box-shadow: 0 0 0 0 rgba(27, 67, 50, 0.4);
+            box-shadow: 0 0 0 0 rgba(212, 165, 116, 0.4);
           }
           50% {
-            box-shadow: 0 0 0 12px rgba(27, 67, 50, 0);
+            box-shadow: 0 0 0 12px rgba(212, 165, 116, 0);
           }
         }
 
@@ -557,17 +557,15 @@ export default function ChatWidget() {
       {/* Chat Bubble (FAB)                                                   */}
       {/* ------------------------------------------------------------------ */}
       {!isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2">
+        <div className="fixed bottom-6 right-6 z-50">
           <button
             onClick={() => setIsOpen(true)}
-            className="animate-pulse-soft flex h-[60px] w-[60px] items-center justify-center rounded-full bg-forest text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl active:scale-100"
+            className="animate-pulse-soft flex items-center gap-2.5 rounded-full bg-amber text-charcoal pl-5 pr-4 py-3.5 shadow-lg shadow-amber/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-amber/30 active:scale-100"
             aria-label="Open chat"
           >
-            <MessageCircle className="h-6 w-6" />
+            <span className="text-sm font-semibold">Chat with us</span>
+            <MessageCircle className="h-5 w-5" />
           </button>
-          <span className="text-xs font-medium text-forest select-none pointer-events-none">
-            Chat with us
-          </span>
         </div>
       )}
     </>

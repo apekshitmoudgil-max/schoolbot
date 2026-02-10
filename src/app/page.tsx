@@ -6,7 +6,6 @@ import {
   Trophy,
   Sprout,
   MapPin,
-  Phone,
   Mail,
   Clock,
   Bus,
@@ -527,15 +526,6 @@ export default function Home() {
                     <br />
                     Bangalore 560035
                   </span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-leaf flex-shrink-0" />
-                  <a
-                    href="tel:+918045678900"
-                    className="text-sage/60 hover:text-mint text-sm transition-colors duration-200"
-                  >
-                    +91 80 4567 8900
-                  </a>
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-leaf flex-shrink-0" />
