@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-forest: #1B4332;
+  --color-forest-light: #2D6A4F;
+  --color-sage: #52796F;
+  --color-leaf: #74A98E;
+  --color-mint: #B7E4C7;
+  --color-cream: #FEF9EF;
+  --color-amber: #D4A574;
+  --color-terracotta: #C1440E;
+  --color-charcoal: #1A1A2E;
+  --color-ivory: #FEFCF6;
+
+  /* Fonts */
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+
+  /* Animations */
+  --animate-fade-in-up: fade-in-up 0.8s ease-out both;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-slide-up: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
+  --animate-typing-dot: typing-dot 1.4s ease-in-out infinite;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(27, 67, 50, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(27, 67, 50, 0);
+  }
+}
+
+@keyframes typing-dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
+
+/* Base styles */
+body {
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  color: var(--color-charcoal);
+  background-color: var(--color-ivory);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+}
+
+/* Demo banner gradient */
+.demo-banner {
+  background: linear-gradient(
+    135deg,
+    var(--color-forest) 0%,
+    var(--color-forest-light) 50%,
+    var(--color-sage) 100%
+  );
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection colors */
+::selection {
+  background-color: var(--color-mint);
+  color: var(--color-forest);
+}
